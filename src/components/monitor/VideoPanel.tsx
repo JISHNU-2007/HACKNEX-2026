@@ -38,8 +38,18 @@ export const VideoPanel: React.FC<VideoPanelProps> = ({
   const [videoSrc, setVideoSrc] = useState<string | undefined>(uploadedUrl ?? undefined);
   const [isAnnotated, setIsAnnotated] = useState(false);
 
+  // Poll until default or uploaded video URL is available (handles async startup fetch)
   useEffect(() => {
-    if (!uploadedVideoId) return;
+    if (videoSrc) return; // already have a source
+    const poll = setInterval(() => {
+      const url = api.getUploadedVideoUrl();
+      if (url) { setVideoSrc(url); clearInterval(poll); }
+    }, 500);
+    return () => clearInterval(poll);
+  }, [videoSrc]);
+
+  useEffect(() => {
+    if (!uploadedVideoId || uploadedVideoId === 'default_demo') return;
     const interval = setInterval(async () => {
       const status = await api.getVideoStatus(uploadedVideoId);
       if (status && status.annotated_url) {
@@ -182,6 +192,7 @@ export const VideoPanel: React.FC<VideoPanelProps> = ({
             className="w-full h-full object-contain relative z-0"
             src={videoSrc}
             muted
+            autoPlay
             loop
             playsInline
             crossOrigin="anonymous"

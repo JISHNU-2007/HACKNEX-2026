@@ -30,6 +30,21 @@ let _uploadedVideoId:  string | null = null;
 let _uploadedVideoUrl: string | null = null;
 let _backendOnline = false;
 
+// Auto-load the default demo video from the backend on startup
+(async () => {
+  try {
+    const base = import.meta.env.VITE_API_BASE || 'http://localhost:8000/api';
+    const r = await fetch(`${base}/default-video`);
+    if (r.ok) {
+      const d = await r.json();
+      _uploadedVideoUrl = d.url;
+      _uploadedVideoId  = d.video_id;
+      _backendOnline    = true;
+    }
+  } catch { /* backend offline, will fall back to mock */ }
+})();
+
+
 // ── HTTP helper ────────────────────────────────────────────────────────────
 async function get<T>(path: string): Promise<T | null> {
   try {

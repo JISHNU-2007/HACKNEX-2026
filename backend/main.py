@@ -47,6 +47,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ─── Serve uploaded & processed videos as static files ───────────────────────
+app.mount("/uploads",  StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
+app.mount("/processed", StaticFiles(directory=str(PROC_DIR)),  name="processed")
+
 # ═══════════════════════════════════════════════════════════════════════════
 # LOAD YOLO MODEL
 # ═══════════════════════════════════════════════════════════════════════════
@@ -508,6 +512,21 @@ async def video_status(video_id: str):
     if video_id not in video_store:
         raise HTTPException(404, "Video not found")
     return video_store[video_id]
+
+
+@app.get("/api/default-video")
+async def get_default_video():
+    """Returns metadata for the default demo video shown at startup."""
+    DEFAULT_FILENAME = "Safety demo.mp4"
+    default_path = UPLOAD_DIR / DEFAULT_FILENAME
+    if not default_path.exists():
+        raise HTTPException(404, "Default video not found")
+    return {
+        "video_id": "default_demo",
+        "filename": DEFAULT_FILENAME,
+        "url": f"http://localhost:8000/uploads/{DEFAULT_FILENAME}",
+        "status": "ready",
+    }
 
 
 # ── Workers ───────────────────────────────────────────────────────────────
