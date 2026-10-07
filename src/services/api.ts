@@ -28,21 +28,30 @@ let currentConfig: SafetyConfig = {
 
 let _uploadedVideoId:  string | null = null;
 let _uploadedVideoUrl: string | null = null;
+let _thermalVideoUrl:  string | null = null;
 let _backendOnline = false;
 
-// Auto-load the default demo video from the backend on startup
+// Auto-load the default demo video and thermal video from the backend on startup
 (async () => {
   try {
     const base = import.meta.env.VITE_API_BASE || 'http://localhost:8000/api';
-    const r = await fetch(`${base}/default-video`);
-    if (r.ok) {
-      const d = await r.json();
+    const [defRes, thermalRes] = await Promise.all([
+      fetch(`${base}/default-video`),
+      fetch(`${base}/thermal-video`),
+    ]);
+    if (defRes.ok) {
+      const d = await defRes.json();
       _uploadedVideoUrl = d.url;
       _uploadedVideoId  = d.video_id;
       _backendOnline    = true;
     }
+    if (thermalRes.ok) {
+      const t = await thermalRes.json();
+      _thermalVideoUrl = t.url;
+    }
   } catch { /* backend offline, will fall back to mock */ }
 })();
+
 
 
 // ── HTTP helper ────────────────────────────────────────────────────────────
@@ -225,6 +234,7 @@ export const api = {
   // ── Utilities ─────────────────────────────────────────────────────────
   getUploadedVideoUrl(): string | null { return _uploadedVideoUrl; },
   getUploadedVideoId():  string | null { return _uploadedVideoId;  },
+  getThermalVideoUrl():  string | null { return _thermalVideoUrl;  },
   isBackendOnline():     boolean       { return _backendOnline;     },
   checkBackend,
 };

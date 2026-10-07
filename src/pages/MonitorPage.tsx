@@ -3,12 +3,13 @@ import { VideoPanel }            from '../components/monitor/VideoPanel';
 import { SafetyStatusPanel }     from '../components/monitor/SafetyStatusPanel';
 import { ActiveIncidentsPanel }  from '../components/monitor/ActiveIncidentsPanel';
 import { BehaviourTimelinePanel }from '../components/monitor/BehaviourTimelinePanel';
+import { ThermalPanel }          from '../components/monitor/ThermalPanel';
 import { WorkerDrawer }          from '../components/monitor/WorkerDrawer';
 import { Toast }                 from '../components/ui/Toast';
 import { useLiveEvents }         from '../hooks/useLiveEvents';
 import type { Zone }             from '../types';
 import { api }                   from '../services/api';
-import { Brain, Activity }       from 'lucide-react';
+import { Brain, Activity, Thermometer } from 'lucide-react';
 
 export const MonitorPage: React.FC = () => {
   const { events, workers, toastMessage, clearToast, refreshData } = useLiveEvents();
@@ -45,6 +46,10 @@ export const MonitorPage: React.FC = () => {
           <Brain className="w-4 h-4 text-teal-400" />
           <span className="text-xs font-bold font-mono text-teal-400">YOLOv8 · best.pt · Live Intelligence</span>
           <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+          <span className="mx-1 text-[#243041]">|</span>
+          <Thermometer className="w-4 h-4 text-orange-400" />
+          <span className="text-xs font-bold font-mono text-orange-400">Thermal IR · Active</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
         </div>
         <div className="flex items-center gap-4 text-xs font-mono">
           <span className="flex items-center gap-1.5">
@@ -64,14 +69,23 @@ export const MonitorPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 2×2 grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-8 min-h-[460px]">
+      {/* ── DUAL FEED ROW: RGB + Thermal ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="min-h-[460px]">
           <VideoPanel zones={zones} workers={workers} onSelectWorker={handleSelectWorker} selectedWorkerId={selectedWorkerId} />
         </div>
-        <div className="lg:col-span-4 min-h-[460px]">
-          <SafetyStatusPanel workers={workers} events={events} onSelectWorker={handleSelectWorker} selectedWorkerId={selectedWorkerId} />
+        <div className="min-h-[460px]">
+          <ThermalPanel workers={workers} onSelectWorker={handleSelectWorker} selectedWorkerId={selectedWorkerId} />
         </div>
+      </div>
+
+      {/* ── SAFETY STATUS PANEL (full width below feeds) ── */}
+      <div>
+        <SafetyStatusPanel workers={workers} events={events} onSelectWorker={handleSelectWorker} selectedWorkerId={selectedWorkerId} />
+      </div>
+
+      {/* ── INCIDENTS + TIMELINE ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="lg:col-span-6 min-h-[420px]">
           <ActiveIncidentsPanel events={events} onAcknowledge={handleAcknowledge} onResolve={handleResolve} />
         </div>
@@ -87,3 +101,4 @@ export const MonitorPage: React.FC = () => {
     </div>
   );
 };
+

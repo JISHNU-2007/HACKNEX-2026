@@ -1,5 +1,6 @@
 __pycache__/
-uploads/
 processed/
-*.mp4
-*.webm
+# Demo videos are too large for GitHub (>100MB).
+# Place these files in backend/uploads/ before running:
+#   - "Safety demo.mp4"     (default construction feed)
+#   - "thermal_detection.mp4" (thermal IR feed)

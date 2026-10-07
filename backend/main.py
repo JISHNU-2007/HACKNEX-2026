@@ -529,6 +529,21 @@ async def get_default_video():
     }
 
 
+@app.get("/api/thermal-video")
+async def get_thermal_video():
+    """Returns metadata for the thermal detection video feed."""
+    THERMAL_FILENAME = "thermal_detection.mp4"
+    thermal_path = UPLOAD_DIR / THERMAL_FILENAME
+    if not thermal_path.exists():
+        raise HTTPException(404, "Thermal video not found")
+    return {
+        "video_id": "thermal_feed",
+        "filename": THERMAL_FILENAME,
+        "url": f"http://localhost:8000/uploads/{THERMAL_FILENAME}",
+        "status": "ready",
+    }
+
+
 # ── Workers ───────────────────────────────────────────────────────────────
 @app.get("/api/workers")
 async def get_workers():
