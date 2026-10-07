@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0B0F14] text-[#E6EDF3] font-sans antialiased selection:bg-teal-500 selection:text-white min-h-screen overflow-x-hidden;
+  }
+}
+
+/* Custom scrollbars for industrial density */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #243041;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a4b63;
+}
+
+/* Light mode overrides when html has class 'light' */
+html.light body {
+  @apply bg-slate-50 text-slate-900;
+}
+
+html.light .bg-dark-bg {
+  background-color: #f8fafc !important;
+}
+
+html.light .bg-dark-surface {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-dark-elevated {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .border-dark-border {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .text-dark-primary {
+  color: #0f172a !important;
+}
+
+html.light .text-dark-secondary {
+  color: #64748b !important;
+}
+
+/* Hatched border pattern for danger/restricted zones */
+.zone-hatched-restricted {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(239, 68, 68, 0.15),
+    rgba(239, 68, 68, 0.15) 10px,
+    rgba(239, 68, 68, 0.05) 10px,
+    rgba(239, 68, 68, 0.05) 20px
+  );
+}
+
+.zone-hatched-danger {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(249, 115, 22, 0.15),
+    rgba(249, 115, 22, 0.15) 10px,
+    rgba(249, 115, 22, 0.05) 10px,
+    rgba(249, 115, 22, 0.05) 20px
+  );
+}
